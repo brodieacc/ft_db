@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -22,15 +24,28 @@ void	error(char *msg)
 	exit(1);
 }
 
-int		main(int argc char *argv[])
+void dostuff(int sock)
+{
+	int n;
+	char buffer[256];
+
+	bzero(buffer, 256);
+	n = read(sock, buffer, 255);
+	if (n < 0)
+		error("ERROR reading from socket");
+	printf("Here is the message: %s\n", buffer);
+	n = write(sock, "I got your message", 18);
+	if (n < 0)
+		error("ERROR writing to socket");
+}
+
+int		main(int argc, char *argv[])
 {
 	int	sockfd;
 	int	newsockfd;
 	int	portno;
-	int	clilen;
+	unsigned int	clilen;
 	int	pid;
-	int	n;
-	char	buffer[256];
 	struct	sockaddr_in serv_addr;
 	struct	sockaddr_in cli_addr;
 	if (argc < 2)
@@ -69,19 +84,4 @@ int		main(int argc char *argv[])
 			close(newsockfd);
 	}
 	return (0); /* Never gets here just for semantics */
-}
-
-void dostuff(int sock)
-{
-	int n;
-	char buffer[256];
-
-	bzero(buffer, 256);
-	n = read(sock, buffer, 255);
-	if (n < 0)
-		error("ERROR reading from socket");
-	printf("Here is the message: %s\n", buffer);
-	n = write(sock, "I got your message", 18);
-	if (n < 0)
-		error("ERROR writing to socket");
 }
