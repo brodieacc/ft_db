@@ -27,6 +27,7 @@ void	error(char *msg)
 void dostuff(int sock)
 {
 	int n;
+
 	char buffer[256];
 
 	bzero(buffer, 256);
@@ -41,13 +42,15 @@ void dostuff(int sock)
 
 int		main(int argc, char *argv[])
 {
-	int	sockfd;
-	int	newsockfd;
-	int	portno;
+	int				sockfd;
+	int				newsockfd;
+	int				portno;
+	int				pid;
+	
 	unsigned int	clilen;
-	int	pid;
-	struct	sockaddr_in serv_addr;
-	struct	sockaddr_in cli_addr;
+
+	struct			sockaddr_in serv_addr;
+	struct			sockaddr_in cli_addr;
 	if (argc < 2)
 	{
 		fprintf(stderr, "Error, no port provided\n");

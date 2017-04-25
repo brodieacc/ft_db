@@ -27,9 +27,9 @@ void	error(char *msg)
 
 int		main(int argc, char *argv[])
 {
-	int	sockfd;
-	int	portno;
-	int	n;
+	int		sockfd;
+	int		portno;
+	int		n;
 
 	struct	sockaddr_in serv_addr;
 	struct	hostent	*server;
@@ -58,9 +58,7 @@ int		main(int argc, char *argv[])
 	serv_addr.sin_port = htons(portno);
 	if (connect(sockfd, (const struct sockaddr *) &serv_addr,
 		sizeof(serv_addr)) < 0)
-		{
 			error("ERROR connecting");
-		}
 	printf("Enter your message: ");
 	bzero(buffer, 256);
 	fgets(buffer, 255, stdin);
