@@ -30,9 +30,7 @@ void	error(char *msg)
 void handleRequest(int sock, FILE *fp)
 {
 	int 	n;
-
 	time_t 	t;
-
 	char 	buffer[256];
 
 	time(&t);
@@ -63,14 +61,11 @@ void handleRequest(int sock, FILE *fp)
 int		main(int argc, char *argv[])
 {
 	FILE			*fp;
-
 	int				sockfd;
 	int				newsockfd;
 	int				portno;
 	int				pid;
-
 	unsigned int	clilen;
-
 	struct			sockaddr_in serv_addr;
 	struct			sockaddr_in cli_addr;
 	if (argc < 2)
@@ -116,5 +111,5 @@ int		main(int argc, char *argv[])
 		else
 			close(newsockfd);
 	}
-	return (0); /* Never gets here just for semantics */
+	return (0);
 }
