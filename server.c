@@ -11,12 +11,15 @@
 /* ************************************************************************** */
 
 #include <string.h>
+#include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 void	error(char *msg)
 {
@@ -24,12 +27,16 @@ void	error(char *msg)
 	exit(1);
 }
 
-void dostuff(int sock)
+void handleRequest(int sock, FILE *fp)
 {
-	int n;
+	int 	n;
 
-	char buffer[256];
+	time_t 	t;
 
+	char 	buffer[256];
+
+	time(&t);
+	fp = fopen("log.txt", "a+");
 	while(1)
 	{
 		bzero(buffer, 256);
@@ -39,11 +46,15 @@ void dostuff(int sock)
 		if (strncmp(buffer, "quit", 4) == 0)
 		{
 			close(sock);
+			fclose(fp);
 			return;
 		}
 		else
+		{
 			printf("Command: %s\n", buffer);
-		n = write(sock, "I got your message", 18);
+			fprintf(fp, "%sFT_DB> %s\n", ctime(&t), buffer);
+		}
+		n = write(sock, "MISCHEIF MANAGED", 16);
 		if (n < 0)
 			error("ERROR writing to socket");
 	}
@@ -51,6 +62,8 @@ void dostuff(int sock)
 
 int		main(int argc, char *argv[])
 {
+	FILE			*fp;
+
 	int				sockfd;
 	int				newsockfd;
 	int				portno;
@@ -78,18 +91,26 @@ int		main(int argc, char *argv[])
 			error("ERROR on binding");
 	listen(sockfd, 128);
 	clilen = sizeof(cli_addr);
+	fp = fopen("log.txt", "a+");
+	fclose(fp);
 	while (1)
 	{
 		newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 		if (newsockfd < 0)
 			error("ERROR on accept");
+		else
+		{
+			fopen("log.txt", "a+");
+			fprintf(fp, "CLIENT IP: %s\n", inet_ntoa(cli_addr.sin_addr));
+			fclose(fp);
+		}
 		pid = fork();
 		if (pid < 0)
 			error("ERROR on fork");
 		if (pid == 0)
 		{
 			close(sockfd);
-			dostuff(newsockfd);
+			handleRequest(newsockfd, fp);
 			exit(0);
 		}
 		else
