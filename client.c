@@ -31,10 +31,10 @@ int		main(int argc, char *argv[])
 	int		portno;
 	int		n;
 
+	char	buffer[256];
+
 	struct	sockaddr_in serv_addr;
 	struct	hostent	*server;
-
-	char	buffer[256];
 	if (argc < 3)
 	{
 		fprintf(stderr, "usage %s hostname port\n", argv[0]);
@@ -59,16 +59,24 @@ int		main(int argc, char *argv[])
 	if (connect(sockfd, (const struct sockaddr *) &serv_addr,
 		sizeof(serv_addr)) < 0)
 			error("ERROR connecting");
-	printf("Enter your message: ");
-	bzero(buffer, 256);
-	fgets(buffer, 255, stdin);
-	n = write(sockfd, buffer, strlen(buffer));
-	if (n < 0)
-		error("ERROR writing to socket");
-	bzero(buffer, 256);
-	n = read(sockfd, buffer, 255);
-	if (n < 0)
-		error("ERROR reading from socket");
-	printf("%s\n", buffer);
+	while (1)
+	{
+		printf("FT_DB> ");
+		bzero(buffer, 256);
+		fgets(buffer, 255, stdin);
+		n = write(sockfd, buffer, strlen(buffer));
+		if (n < 0)
+			error("ERROR writing to socket");
+		if (strncmp(buffer, "quit", 4) == 0)
+		{
+			shutdown(sockfd, 1);
+			return (0);
+		}
+		bzero(buffer, 256);
+		n = read(sockfd, buffer, 255);
+		if (n < 0)
+			error("ERROR reading from socket");
+		printf("%s\n", buffer);
+	}
 	return (0);
 }

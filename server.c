@@ -30,14 +30,23 @@ void dostuff(int sock)
 
 	char buffer[256];
 
-	bzero(buffer, 256);
-	n = read(sock, buffer, 255);
-	if (n < 0)
-		error("ERROR reading from socket");
-	printf("Here is the message: %s\n", buffer);
-	n = write(sock, "I got your message", 18);
-	if (n < 0)
-		error("ERROR writing to socket");
+	while(1)
+	{
+		bzero(buffer, 256);
+		n = read(sock, buffer, 255);
+		if (n < 0)
+			error("ERROR reading from socket");
+		if (strncmp(buffer, "quit", 4) == 0)
+		{
+			close(sock);
+			return;
+		}
+		else
+			printf("Command: %s\n", buffer);
+		n = write(sock, "I got your message", 18);
+		if (n < 0)
+			error("ERROR writing to socket");
+	}
 }
 
 int		main(int argc, char *argv[])
@@ -46,7 +55,7 @@ int		main(int argc, char *argv[])
 	int				newsockfd;
 	int				portno;
 	int				pid;
-	
+
 	unsigned int	clilen;
 
 	struct			sockaddr_in serv_addr;
