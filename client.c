@@ -61,7 +61,7 @@ int		main(int argc, char *argv[])
 	{
 		printf("FT_DB> ");
 		bzero(buffer, 256);
-		fgets(buffer, 255, stdin);
+		scanf("%s\n", buffer);
 		n = write(sockfd, buffer, strlen(buffer));
 		if (n < 0)
 			error("ERROR writing to socket");

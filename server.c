@@ -20,6 +20,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "query.h"
 
 void	error(char *msg)
 {
@@ -49,8 +50,14 @@ void handleRequest(int sock, FILE *fp)
 		}
 		else
 		{
-			printf("Command: %s\n", buffer);
+			printf("Command: %s", buffer);
 			fprintf(fp, "%sFT_DB> %s\n", ctime(&t), buffer);
+			init_first();
+			init_second();
+			init_third();
+			init_fourth();
+			init_operators();
+			printf("%s", query_validation(buffer));
 		}
 		n = write(sock, "MISCHEIF MANAGED", 16);
 		if (n < 0)
